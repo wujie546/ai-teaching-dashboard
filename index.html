@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 專屬教學儀表板 - Vibe Coding</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+TC:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <i class="fa-solid fa-brain-circuit neon-icon"></i>
+                <h2>教學儀表板 <span>v1.0</span></h2>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="#overview" class="nav-item active"><i class="fa-solid fa-chart-pie"></i> 課堂總覽</a>
+                <a href="#interaction" class="nav-item"><i class="fa-solid fa-chalkboard-user"></i> 課堂互動</a>
+                <a href="#ai-tools" class="nav-item"><i class="fa-solid fa-robot"></i> AI 工具箱</a>
+                <a href="#copilot" class="nav-item"><i class="fa-solid fa-keyboard"></i> AI 助教</a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar"><i class="fa-solid fa-user-tie"></i></div>
+                    <div class="user-info">
+                        <span class="user-name">總編</span>
+                        <span class="user-role">首席講師</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-header">
+                <div class="header-title">
+                    <h1>歡迎回來，總編！</h1>
+                    <p class="current-date" id="live-date">載入中...</p>
+                </div>
+                <div class="header-status">
+                    <span class="status-badge"><span class="pulse-dot"></span> 課堂進行中</span>
+                </div>
+            </header>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                
+                <!-- Section 1: Overview Card -->
+                <section id="overview" class="grid-section col-span-2">
+                    <div class="section-header">
+                        <h3><i class="fa-solid fa-gauge-high"></i> 今日課堂狀態</h3>
+                    </div>
+                    <div class="metrics-container">
+                        <!-- Card 1 -->
+                        <div class="metric-card">
+                            <div class="card-icon blue-grad"><i class="fa-solid fa-clock"></i></div>
+                            <div class="card-data">
+                                <span class="label">課程已進行</span>
+                                <h3 id="class-timer">00:00:00</h3>
+                            </div>
+                        </div>
+                        <!-- Card 2 -->
+                        <div class="metric-card">
+                            <div class="card-icon pink-grad"><i class="fa-solid fa-users"></i></div>
+                            <div class="card-data">
+                                <span class="label">學生出席率</span>
+                                <h3 id="attendance-rate">94.5% <span class="trend up"><i class="fa-solid fa-caret-up"></i> 45/48 人</span></h3>
+                            </div>
+                        </div>
+                        <!-- Card 3 -->
+                        <div class="metric-card">
+                            <div class="card-icon purple-grad"><i class="fa-solid fa-face-smile"></i></div>
+                            <div class="card-data">
+                                <span class="label">課堂專注度</span>
+                                <h3 id="attention-score">88% <span class="trend up"><i class="fa-solid fa-caret-up"></i> 優良</span></h3>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Feedback Chart -->
+                    <div class="chart-card">
+                        <div class="card-header-flex">
+                            <h4>課堂溫度計 (即時聽課反饋)</h4>
+                            <div class="chart-actions">
+                                <button class="btn-small" id="simulate-feedback-btn"><i class="fa-solid fa-rotate"></i> 模擬更新</button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="feedbackChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 2: Classroom Interaction -->
+                <section id="interaction" class="grid-section">
+                    <div class="section-header">
+                        <h3><i class="fa-solid fa-wand-magic-sparkles"></i> 課堂互動工具</h3>
+                    </div>
+                    
+                    <!-- Random Picker Widget -->
+                    <div class="widget-card picker-widget">
+                        <h4><i class="fa-solid fa-dice"></i> AI 隨機抽人</h4>
+                        <p class="widget-desc">讓 AI 幫您挑選一位幸運學生回答問題！</p>
+                        <div class="picker-display">
+                            <div id="picker-result">等待抽取...</div>
+                        </div>
+                        <button class="btn btn-primary btn-block" id="pick-student-btn">
+                            <i class="fa-solid fa-bolt"></i> 點我抽取
+                        </button>
+                    </div>
+
+                    <!-- Focus Timer Widget -->
+                    <div class="widget-card timer-widget">
+                        <h4><i class="fa-solid fa-hourglass-half"></i> 專注倒數計時器</h4>
+                        <div class="timer-display" id="focus-timer-display">05:00</div>
+                        <div class="timer-controls">
+                            <button class="btn btn-secondary" id="timer-5min">5分</button>
+                            <button class="btn btn-secondary" id="timer-10min">10分</button>
+                            <button class="btn btn-primary" id="timer-toggle-btn"><i class="fa-solid fa-play"></i> 開始</button>
+                            <button class="btn btn-danger" id="timer-reset-btn"><i class="fa-solid fa-undo"></i> 重設</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 3: AI Quick Tools -->
+                <section id="ai-tools" class="grid-section col-span-2">
+                    <div class="section-header">
+                        <h3><i class="fa-solid fa-rocket"></i> 本機 AI 工具快捷面板</h3>
+                        <span class="sub-header-desc">快速啟動與檢視您本機配置的 AI 工具鏈</span>
+                    </div>
+                    <div class="ai-tools-grid">
+                        <!-- Tool 1: Voice Clone -->
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <div class="tool-badge active">本地服務</div>
+                                <h4>VoxCPM2 聲音克隆</h4>
+                            </div>
+                            <p>使用三師爸或您自己的聲音快速合成出高品質的語音教材。</p>
+                            <div class="tool-path-info">
+                                <span><i class="fa-solid fa-folder"></i> 路徑：<code>D:\軟體\語音模型</code></span>
+                            </div>
+                            <div class="tool-actions">
+                                <button class="btn btn-outline" onclick="alert('請於命令提示字元或終端機執行：\ncd D:\\軟體\\語音模型\nstart.bat')">
+                                    <i class="fa-solid fa-terminal"></i> 啟動腳本指引
+                                </button>
+                                <a href="http://127.0.0.1:7860" target="_blank" class="btn btn-link">
+                                    <i class="fa-solid fa-external-link"></i> 開啟網頁 (7860)
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Tool 2: Audio to SRT -->
+                        <div class="tool-card">
+                            <div class="tool-header">
+                                <div class="tool-badge">自動化工具</div>
+                                <h4>剪輯與自動字幕工具包</h4>
+                            </div>
+                            <p>一鍵將課堂錄音檔或影片檔，透過 Whisper-large 雲端/本地模型生成極度精確的 SRT 時間碼字幕。</p>
+                            <div class="tool-path-info">
+                                <span><i class="fa-solid fa-folder"></i> 路徑：<code>剪輯技能工具包</code></span>
+                            </div>
+                            <div class="tool-actions">
+                                <button class="btn btn-outline" onclick="alert('此為全域整合技能，您可以在 AI 聊天視窗中直接要求：\n「幫我把 D:\\錄音檔.mp3 轉成字幕」')">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i> 技能使用指引
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 4: AI Copilot Assistant -->
+                <section id="copilot" class="grid-section">
+                    <div class="section-header">
+                        <h3><i class="fa-solid fa-robot"></i> AI Classroom Copilot</h3>
+                    </div>
+                    <div class="copilot-card">
+                        <h4><i class="fa-solid fa-pen-fancy"></i> 即時課堂筆記 & 簡報大綱生成器</h4>
+                        <p class="widget-desc">輸入今日課堂講授的幾個關鍵詞，AI 將為您即時生成大綱與心智圖草案。</p>
+                        
+                        <div class="form-group">
+                            <textarea id="copilot-input" placeholder="例如：AI 代理人 (Agent)、Model Context Protocol (MCP)、環境變數配置..."></textarea>
+                        </div>
+                        
+                        <button class="btn btn-primary btn-block" id="generate-outline-btn">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> 開始生成大綱
+                        </button>
+
+                        <div class="copilot-output-area hidden" id="copilot-output-container">
+                            <h5><i class="fa-solid fa-file-lines"></i> 生成的簡報大綱草稿：</h5>
+                            <div class="copilot-output-content" id="copilot-output"></div>
+                            <button class="btn btn-secondary btn-small" id="export-md-btn">
+                                <i class="fa-solid fa-download"></i> 匯出為 Markdown (.md)
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+    
+    <!-- Audio Element for Picker/Timer alerts -->
+    <audio id="alert-sound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-84.wav" preload="auto"></audio>
+
+    <script src="app.js"></script>
+</body>
+</html>

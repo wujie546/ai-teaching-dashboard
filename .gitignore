@@ -1,0 +1,8 @@
+# Git Ignore
+node_modules/
+.DS_Store
+*.log
+.gemini/
+.claude/
+.agents/ignored/
+scratch/
