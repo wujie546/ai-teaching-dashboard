@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>巫立 - 數位行銷名片</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="page-container">
+        <!-- Background decorative elements -->
+        <div class="bg-glow bg-glow-1"></div>
+        <div class="bg-glow bg-glow-2"></div>
+
+        <!-- 3D Card Container -->
+        <div class="card-container">
+            <div class="business-card" id="interactive-card">
+                <!-- Card Inner Background Glow -->
+                <div class="card-glow"></div>
+                
+                <!-- Card Content -->
+                <div class="card-header">
+                    <div class="chip-icon">
+                        <i class="fa-solid fa-microchip"></i>
+                    </div>
+                    <span class="card-badge">AI Marketing Specialist</span>
+                </div>
+                
+                <div class="card-body">
+                    <h1 class="name">巫立</h1>
+                    <p class="tagline">帶您用 AI 玩轉科技！</p>
+                    
+                    <div class="skills-tags">
+                        <span class="tag"><i class="fa-solid fa-brain"></i> AI 應用</span>
+                        <span class="tag"><i class="fa-solid fa-code"></i> 科技推廣</span>
+                        <span class="tag"><i class="fa-solid fa-chart-line"></i> 數位行銷</span>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fa-solid fa-envelope"></i>
+                            <span>wuli.ai@example.com</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fa-solid fa-globe"></i>
+                            <span>wuli-tech.io</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Social Links -->
+                    <div class="social-links">
+                        <a href="#" class="social-icon" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon" title="Line"><i class="fa-brands fa-line"></i></a>
+                        <a href="#" class="social-icon" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Interactive Tip -->
+        <p class="interactive-tip"><i class="fa-solid fa-wand-magic-sparkles"></i> 移動滑鼠懸停於名片上，體驗 3D 立體傾斜效果</p>
+    </div>
+
+    <!-- Script for 3D Tilt Effect -->
+    <script>
+        const card = document.getElementById('interactive-card');
+        const container = document.querySelector('.card-container');
+
+        // Mouse Move Event
+        container.addEventListener('mousemove', (e) => {
+            const rect = container.getBoundingClientRect();
+            
+            // Calculate mouse position relative to card container center
+            const x = e.clientX - rect.left - (rect.width / 2);
+            const y = e.clientY - rect.top - (rect.height / 2);
+            
+            // Calculate tilt angle (max 15 degrees)
+            const rotateX = -(y / (rect.height / 2)) * 12;
+            const rotateY = (x / (rect.width / 2)) * 12;
+            
+            // Apply tilt transform
+            card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px)`;
+            
+            // Move glow effect based on cursor
+            const glow = card.querySelector('.card-glow');
+            const percentX = ((e.clientX - rect.left) / rect.width) * 100;
+            const percentY = ((e.clientY - rect.top) / rect.height) * 100;
+            glow.style.background = `radial-gradient(circle at ${percentX}% ${percentY}%, rgba(255, 255, 255, 0.15) 0%, transparent 60%)`;
+        });
+
+        // Mouse Leave Event (Reset tilt)
+        container.addEventListener('mouseleave', () => {
+            card.style.transform = 'rotateX(0deg) rotateY(0deg) translateY(0)';
+            card.style.transition = 'transform 0.5s ease';
+            
+            const glow = card.querySelector('.card-glow');
+            glow.style.background = 'transparent';
+        });
+
+        // Mouse Enter Event (Remove transition duration during mousemove for responsiveness)
+        container.addEventListener('mouseenter', () => {
+            card.style.transition = 'none';
+        });
+    </script>
+</body>
+</html>
