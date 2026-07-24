@@ -40,6 +40,10 @@
 - 網址：https://ai-teaching-dashboard.netlify.app
 - 部署方式：Netlify CLI
 
+## Obsidian 設定
+- Vault 路徑：D:\Obsidian
+- 專案資料夾：115.07.23舟神好讚教學工具箱
+
 ## 下一步
 - [ ] 根據使用者需求調整功能
 - [ ] 考慮加入更多教學工具
