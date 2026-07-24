@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>課堂倒數計時器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .timer-display {
+            font-size: 150px;
+            font-weight: bold;
+            color: #00d9ff;
+            text-shadow: 0 0 30px rgba(0, 217, 255, 0.5);
+            margin-bottom: 50px;
+            transition: color 0.3s ease;
+        }
+
+        .timer-display.warning {
+            color: #ff4444;
+            text-shadow: 0 0 30px rgba(255, 68, 68, 0.7);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes flash {
+            0%, 100% { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
+            50% { background: linear-gradient(135deg, #2d1a1a 0%, #3e1616 100%); }
+        }
+
+        .flash {
+            animation: flash 0.5s infinite;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        button {
+            font-size: 24px;
+            font-weight: bold;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .start-btn {
+            background: #00cc66;
+            color: white;
+            box-shadow: 0 5px 20px rgba(0, 204, 102, 0.4);
+        }
+
+        .start-btn:hover {
+            background: #00aa55;
+            box-shadow: 0 8px 25px rgba(0, 204, 102, 0.5);
+        }
+
+        .pause-btn {
+            background: #ffaa00;
+            color: white;
+            box-shadow: 0 5px 20px rgba(255, 170, 0, 0.4);
+        }
+
+        .pause-btn:hover {
+            background: #ee9900;
+            box-shadow: 0 8px 25px rgba(255, 170, 0, 0.5);
+        }
+
+        .reset-btn {
+            background: #666;
+            color: white;
+            box-shadow: 0 5px 20px rgba(102, 102, 102, 0.4);
+        }
+
+        .reset-btn:hover {
+            background: #555;
+            box-shadow: 0 8px 25px rgba(102, 102, 102, 0.5);
+        }
+
+        .time-settings {
+            margin-bottom: 30px;
+        }
+
+        .time-settings label {
+            color: #888;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        .time-settings input {
+            width: 80px;
+            padding: 8px;
+            font-size: 16px;
+            border: 2px solid #444;
+            border-radius: 5px;
+            background: #222;
+            color: white;
+            text-align: center;
+        }
+
+        .time-settings input:focus {
+            outline: none;
+            border-color: #00d9ff;
+        }
+
+        .quick-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .quick-btn {
+            font-size: 14px;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: 2px solid #444;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: transparent;
+            color: #aaa;
+        }
+
+        .quick-btn:hover {
+            border-color: #00d9ff;
+            color: #00d9ff;
+            background: rgba(0, 217, 255, 0.1);
+        }
+
+        .quick-btn.active {
+            border-color: #00d9ff;
+            color: #00d9ff;
+            background: rgba(0, 217, 255, 0.2);
+        }
+
+        .quick-btn.add-time {
+            border-color: #00cc66;
+            color: #00cc66;
+        }
+
+        .quick-btn.add-time:hover {
+            background: rgba(0, 204, 102, 0.2);
+        }
+
+        .quick-btn.test-time {
+            border-color: #ffaa00;
+            color: #ffaa00;
+        }
+
+        .quick-btn.test-time:hover {
+            background: rgba(255, 170, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="time-settings">
+            <label>設定時間（分鐘）：</label>
+            <input type="number" id="minutesInput" value="5" min="1" max="99">
+        </div>
+        
+        <div class="timer-display" id="timerDisplay">05:00</div>
+        
+        <div class="buttons">
+            <button class="start-btn" id="startBtn">開始</button>
+            <button class="pause-btn" id="pauseBtn">暫停</button>
+            <button class="reset-btn" id="resetBtn">重置</button>
+        </div>
+
+        <div class="quick-buttons">
+            <button class="quick-btn" data-time="3">3 分鐘</button>
+            <button class="quick-btn active" data-time="5">5 分鐘</button>
+            <button class="quick-btn" data-time="10">10 分鐘</button>
+            <button class="quick-btn" data-time="15">15 分鐘</button>
+            <button class="quick-btn add-time" data-add="1">+1 分鐘</button>
+            <button class="quick-btn test-time" data-test="5">5 秒測試</button>
+        </div>
+    </div>
+
+    <script>
+        let totalSeconds = 5 * 60;
+        let remainingSeconds = totalSeconds;
+        let timerInterval = null;
+        let isRunning = false;
+
+        const timerDisplay = document.getElementById('timerDisplay');
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const minutesInput = document.getElementById('minutesInput');
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function updateDisplay() {
+            timerDisplay.textContent = formatTime(remainingSeconds);
+            
+            if (remainingSeconds === 0) {
+                timerDisplay.classList.add('warning');
+                document.body.classList.add('flash');
+                playAlarm();
+            }
+        }
+
+        function playAlarm() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.value = 800;
+                    oscillator.type = 'sine';
+                    
+                    gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.3);
+                }, i * 400);
+            }
+        }
+
+        function startTimer() {
+            if (isRunning || remainingSeconds === 0) return;
+            
+            isRunning = true;
+            timerInterval = setInterval(() => {
+                remainingSeconds--;
+                updateDisplay();
+                
+                if (remainingSeconds === 0) {
+                    clearInterval(timerInterval);
+                    isRunning = false;
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            if (!isRunning) return;
+            
+            clearInterval(timerInterval);
+            isRunning = false;
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            
+            const minutes = parseInt(minutesInput.value) || 5;
+            totalSeconds = minutes * 60;
+            remainingSeconds = totalSeconds;
+            
+            timerDisplay.classList.remove('warning');
+            document.body.classList.remove('flash');
+            
+            updateDisplay();
+        }
+
+        minutesInput.addEventListener('change', () => {
+            if (!isRunning) {
+                resetTimer();
+            }
+        });
+
+        startBtn.addEventListener('click', startTimer);
+        pauseBtn.addEventListener('click', pauseTimer);
+        resetBtn.addEventListener('click', resetTimer);
+
+        // Quick time buttons
+        document.querySelectorAll('.quick-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (btn.dataset.time) {
+                    // Set specific time
+                    const minutes = parseInt(btn.dataset.time);
+                    minutesInput.value = minutes;
+                    resetTimer();
+                    
+                    // Update active state
+                    document.querySelectorAll('.quick-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                } else if (btn.dataset.add) {
+                    // Add time
+                    const addMinutes = parseInt(btn.dataset.add);
+                    const currentMinutes = Math.floor(remainingSeconds / 60);
+                    const newMinutes = currentMinutes + addMinutes;
+                    minutesInput.value = newMinutes;
+                    totalSeconds = newMinutes * 60;
+                    remainingSeconds = totalSeconds;
+                    updateDisplay();
+                } else if (btn.dataset.test) {
+                    // Test mode (seconds)
+                    const testSeconds = parseInt(btn.dataset.test);
+                    minutesInput.value = 1;
+                    totalSeconds = testSeconds;
+                    remainingSeconds = testSeconds;
+                    updateDisplay();
+                }
+            });
+        });
+
+        updateDisplay();
+    </script>
+</body>
+</html>

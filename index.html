@@ -3,220 +3,1171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 專屬教學儀表板 - Vibe Coding</title>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+TC:wght@300;400;700;900&display=swap" rel="stylesheet">
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js for data visualization -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Custom Style -->
-    <link rel="stylesheet" href="style.css">
+    <title>好讚教學工具箱</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+        }
+
+        .browser-alert {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #ff6b6b, #e74c3c);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            z-index: 1000;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .browser-alert.show {
+            display: block;
+        }
+
+        .browser-alert button {
+            background: white;
+            color: #e74c3c;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 10px;
+            margin-top: 10px;
+        }
+
+        .browser-alert .copy-btn {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .nav-tab:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, #8a2be2, #4b0082);
+            box-shadow: 0 5px 20px rgba(138, 43, 226, 0.4);
+        }
+
+        .content {
+            padding: 20px;
+            min-height: calc(100vh - 140px);
+        }
+
+        .tool-section {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .tool-section.active {
+            display: block;
+        }
+
+        .tool-title {
+            font-size: 32px;
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* ===== 01_Card Styles ===== */
+        .card-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+        }
+
+        .digital-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .digital-card .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: white;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+        }
+
+        .digital-card h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .digital-card p {
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .digital-card .contact-info {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .digital-card .contact-info p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        /* ===== 02_Timer Styles ===== */
+        .timer-container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .timer-display {
+            font-size: 100px;
+            font-weight: bold;
+            color: #00d9ff;
+            text-shadow: 0 0 30px rgba(0, 217, 255, 0.5);
+            margin: 30px 0;
+        }
+
+        .timer-display.warning {
+            color: #ff4444;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .timer-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .timer-btn {
+            font-size: 18px;
+            font-weight: bold;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .start-btn { background: #00cc66; color: white; }
+        .pause-btn { background: #ffaa00; color: white; }
+        .reset-btn { background: #666; color: white; }
+
+        .timer-btn:hover { transform: scale(1.05); }
+
+        .quick-times {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .quick-time-btn {
+            padding: 8px 16px;
+            border: 2px solid #444;
+            border-radius: 20px;
+            background: transparent;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quick-time-btn:hover {
+            border-color: #00d9ff;
+            color: #00d9ff;
+        }
+
+        /* ===== 03_Score Styles ===== */
+        .score-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .group-card {
+            background: linear-gradient(135deg, #f5f5f5, #fff);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .group-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .group-card:nth-child(1) { border-top: 5px solid #ff6b6b; }
+        .group-card:nth-child(2) { border-top: 5px solid #4ecdc4; }
+        .group-card:nth-child(3) { border-top: 5px solid #ffe66d; }
+        .group-card:nth-child(4) { border-top: 5px solid #95e1d3; }
+        .group-card:nth-child(5) { border-top: 5px solid #dda0dd; }
+        .group-card:nth-child(6) { border-top: 5px solid #87ceeb; }
+
+        .group-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .group-score {
+            font-size: 60px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 15px 0;
+        }
+
+        .group-score.highest {
+            color: #e74c3c;
+            animation: pulse 1s infinite;
+        }
+
+        .score-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .score-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .score-btn:hover { transform: scale(1.05); }
+        .score-add { background: #00cc66; color: white; }
+        .score-sub { background: #ff6b6b; color: white; }
+
+        .global-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .global-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .global-btn:hover { transform: scale(1.05); }
+        .global-reset { background: #666; color: white; }
+        .global-reward { background: #f39c12; color: white; }
+
+        /* ===== 04_Lottery Styles ===== */
+        .lottery-container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .lottery-btn {
+            font-size: 24px;
+            font-weight: bold;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(231, 76, 60, 0.4);
+            transition: all 0.3s ease;
+            margin: 20px 0;
+        }
+
+        .lottery-btn:hover { transform: translateY(-3px); }
+
+        .lottery-result {
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #fff9c4, #fff3e0);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .lottery-name {
+            font-size: 64px;
+            font-weight: bold;
+            color: #e74c3c;
+            opacity: 0;
+        }
+
+        .lottery-name.show {
+            animation: bounceIn 0.8s ease forwards;
+        }
+
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .name-input-area {
+            margin: 20px 0;
+        }
+
+        .name-input-area textarea {
+            width: 100%;
+            height: 80px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+            resize: none;
+        }
+
+        .lottery-options {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .remaining-badge {
+            background: #e74c3c;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 14px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* ===== 05_Whiteboard Styles ===== */
+        .whiteboard-toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .wb-color-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid white;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .wb-color-btn:hover { transform: scale(1.1); }
+        .wb-color-btn.active { box-shadow: 0 0 0 3px #ffd700; }
+
+        .wb-black { background: #000; }
+        .wb-red { background: #e74c3c; }
+        .wb-blue { background: #3498db; }
+
+        .wb-action-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .wb-eraser { background: #95a5a6; color: white; }
+        .wb-clear { background: #e74c3c; color: white; }
+        .wb-save { background: #2ecc71; color: white; }
+
+        .wb-action-btn:hover { transform: scale(1.05); }
+
+        .whiteboard-canvas {
+            border: 10px solid #b0b0b0;
+            border-radius: 10px;
+            background: white;
+            cursor: crosshair;
+            touch-action: none;
+            width: 100%;
+        }
+
+        /* ===== 06_Flashcard Styles ===== */
+        .flashcard-container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .fc-card-container {
+            perspective: 1000px;
+            margin: 30px 0;
+        }
+
+        .fc-card {
+            width: 100%;
+            max-width: 500px;
+            height: 300px;
+            margin: 0 auto;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease;
+            cursor: pointer;
+        }
+
+        .fc-card.flipped { transform: rotateY(180deg); }
+
+        .fc-card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .fc-front { background: linear-gradient(135deg, #fff, #f5f5f5); }
+        .fc-back { background: linear-gradient(135deg, #ff9a56, #ff6b6b); transform: rotateY(180deg); }
+
+        .fc-label { font-size: 14px; color: #999; margin-bottom: 15px; text-transform: uppercase; }
+        .fc-back .fc-label { color: rgba(255, 255, 255, 0.8); }
+
+        .fc-content { font-size: 42px; font-weight: bold; color: #333; }
+        .fc-back .fc-content { color: white; font-size: 32px; }
+
+        .fc-speak-btn {
+            margin-top: 15px;
+            padding: 8px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .fc-nav-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .fc-nav-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .fc-prev { background: rgba(102, 126, 234, 0.2); color: #667eea; }
+        .fc-next { background: #667eea; color: white; }
+        .fc-nav-btn:hover { transform: translateY(-2px); }
+
+        .fc-progress {
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .fc-progress-bar {
+            width: 100%;
+            max-width: 500px;
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            margin: 10px auto 0;
+            overflow: hidden;
+        }
+
+        .fc-progress-fill {
+            height: 100%;
+            background: #667eea;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 22px; }
+            .nav-tab { padding: 8px 14px; font-size: 12px; }
+            .tool-title { font-size: 24px; }
+            .timer-display { font-size: 64px; }
+            .lottery-name { font-size: 48px; }
+            .fc-content { font-size: 32px; }
+            .fc-card { height: 250px; }
+            .group-score { font-size: 48px; }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 { font-size: 18px; }
+            .nav-tab { padding: 6px 10px; font-size: 11px; }
+            .timer-display { font-size: 48px; }
+            .lottery-name { font-size: 36px; }
+            .digital-card { padding: 25px; }
+        }
+    </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="logo-area">
-                <i class="fa-solid fa-brain-circuit neon-icon"></i>
-                <h2>教學儀表板 <span>v1.0</span></h2>
-            </div>
-            
-            <nav class="nav-menu">
-                <a href="#overview" class="nav-item active"><i class="fa-solid fa-chart-pie"></i> 課堂總覽</a>
-                <a href="#interaction" class="nav-item"><i class="fa-solid fa-chalkboard-user"></i> 課堂互動</a>
-                <a href="#ai-tools" class="nav-item"><i class="fa-solid fa-robot"></i> AI 工具箱</a>
-                <a href="#copilot" class="nav-item"><i class="fa-solid fa-keyboard"></i> AI 助教</a>
-            </nav>
-            
-            <div class="sidebar-footer">
-                <div class="user-profile">
-                    <div class="avatar">
-                        <img src="avatar.png" alt="總編" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
-                    </div>
-                    <div class="user-info">
-                        <span class="user-name">總編</span>
-                        <span class="user-role">首席講師</span>
-                    </div>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Content Area -->
-        <main class="main-content">
-            <!-- Header -->
-            <header class="top-header">
-                <div class="header-title">
-                    <h1>歡迎回來，總編！</h1>
-                    <p class="current-date" id="live-date">載入中...</p>
-                </div>
-                <div class="header-status">
-                    <span class="status-badge"><span class="pulse-dot"></span> 課堂進行中</span>
-                </div>
-            </header>
-
-            <!-- Dashboard Grid -->
-            <div class="dashboard-grid">
-                
-                <!-- Section 1: Overview Card -->
-                <section id="overview" class="grid-section col-span-2">
-                    <div class="section-header">
-                        <h3><i class="fa-solid fa-gauge-high"></i> 今日課堂狀態</h3>
-                    </div>
-                    <div class="metrics-container">
-                        <!-- Card 1 -->
-                        <div class="metric-card">
-                            <div class="card-icon blue-grad"><i class="fa-solid fa-clock"></i></div>
-                            <div class="card-data">
-                                <span class="label">課程已進行</span>
-                                <h3 id="class-timer">00:00:00</h3>
-                            </div>
-                        </div>
-                        <!-- Card 2 -->
-                        <div class="metric-card">
-                            <div class="card-icon pink-grad"><i class="fa-solid fa-users"></i></div>
-                            <div class="card-data">
-                                <span class="label">學生出席率</span>
-                                <h3 id="attendance-rate">94.5% <span class="trend up"><i class="fa-solid fa-caret-up"></i> 45/48 人</span></h3>
-                            </div>
-                        </div>
-                        <!-- Card 3 -->
-                        <div class="metric-card">
-                            <div class="card-icon purple-grad"><i class="fa-solid fa-face-smile"></i></div>
-                            <div class="card-data">
-                                <span class="label">課堂專注度</span>
-                                <h3 id="attention-score">88% <span class="trend up"><i class="fa-solid fa-caret-up"></i> 優良</span></h3>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Feedback Chart -->
-                    <div class="chart-card">
-                        <div class="card-header-flex">
-                            <h4>課堂溫度計 (即時聽課反饋)</h4>
-                            <div class="chart-actions">
-                                <button class="btn-small" id="simulate-feedback-btn"><i class="fa-solid fa-rotate"></i> 模擬更新</button>
-                            </div>
-                        </div>
-                        <div class="chart-wrapper">
-                            <canvas id="feedbackChart"></canvas>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Section 2: Classroom Interaction -->
-                <section id="interaction" class="grid-section">
-                    <div class="section-header">
-                        <h3><i class="fa-solid fa-wand-magic-sparkles"></i> 課堂互動工具</h3>
-                    </div>
-                    
-                    <!-- Random Picker Widget -->
-                    <div class="widget-card picker-widget">
-                        <h4><i class="fa-solid fa-dice"></i> AI 隨機抽人</h4>
-                        <p class="widget-desc">讓 AI 幫您挑選一位幸運學生回答問題！</p>
-                        <div class="picker-display">
-                            <div id="picker-result">等待抽取...</div>
-                        </div>
-                        <button class="btn btn-primary btn-block" id="pick-student-btn">
-                            <i class="fa-solid fa-bolt"></i> 點我抽取
-                        </button>
-                    </div>
-
-                    <!-- Focus Timer Widget -->
-                    <div class="widget-card timer-widget">
-                        <h4><i class="fa-solid fa-hourglass-half"></i> 專注倒數計時器</h4>
-                        <div class="timer-display" id="focus-timer-display">05:00</div>
-                        <div class="timer-controls">
-                            <button class="btn btn-secondary" id="timer-5min">5分</button>
-                            <button class="btn btn-secondary" id="timer-10min">10分</button>
-                            <button class="btn btn-primary" id="timer-toggle-btn"><i class="fa-solid fa-play"></i> 開始</button>
-                            <button class="btn btn-danger" id="timer-reset-btn"><i class="fa-solid fa-undo"></i> 重設</button>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Section 3: AI Quick Tools -->
-                <section id="ai-tools" class="grid-section col-span-2">
-                    <div class="section-header">
-                        <h3><i class="fa-solid fa-rocket"></i> 本機 AI 工具快捷面板</h3>
-                        <span class="sub-header-desc">快速啟動與檢視您本機配置的 AI 工具鏈</span>
-                    </div>
-                    <div class="ai-tools-grid">
-                        <!-- Tool 1: Voice Clone -->
-                        <div class="tool-card">
-                            <div class="tool-header">
-                                <div class="tool-badge active">本地服務</div>
-                                <h4>VoxCPM2 聲音克隆</h4>
-                            </div>
-                            <p>使用三師爸或您自己的聲音快速合成出高品質的語音教材。</p>
-                            <div class="tool-path-info">
-                                <span><i class="fa-solid fa-folder"></i> 路徑：<code>D:\軟體\語音模型</code></span>
-                            </div>
-                            <div class="tool-actions">
-                                <button class="btn btn-outline" onclick="alert('請於命令提示字元或終端機執行：\ncd D:\\軟體\\語音模型\nstart.bat')">
-                                    <i class="fa-solid fa-terminal"></i> 啟動腳本指引
-                                </button>
-                                <a href="http://127.0.0.1:7860" target="_blank" class="btn btn-link">
-                                    <i class="fa-solid fa-external-link"></i> 開啟網頁 (7860)
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- Tool 2: Audio to SRT -->
-                        <div class="tool-card">
-                            <div class="tool-header">
-                                <div class="tool-badge">自動化工具</div>
-                                <h4>剪輯與自動字幕工具包</h4>
-                            </div>
-                            <p>一鍵將課堂錄音檔或影片檔，透過 Whisper-large 雲端/本地模型生成極度精確的 SRT 時間碼字幕。</p>
-                            <div class="tool-path-info">
-                                <span><i class="fa-solid fa-folder"></i> 路徑：<code>剪輯技能工具包</code></span>
-                            </div>
-                            <div class="tool-actions">
-                                <button class="btn btn-outline" onclick="alert('此為全域整合技能，您可以在 AI 聊天視窗中直接要求：\n「幫我把 D:\\錄音檔.mp3 轉成字幕」')">
-                                    <i class="fa-solid fa-wand-magic-sparkles"></i> 技能使用指引
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Section 4: AI Copilot Assistant -->
-                <section id="copilot" class="grid-section">
-                    <div class="section-header">
-                        <h3><i class="fa-solid fa-robot"></i> AI Classroom Copilot</h3>
-                    </div>
-                    <div class="copilot-card">
-                        <h4><i class="fa-solid fa-pen-fancy"></i> 即時課堂筆記 & 簡報大綱生成器</h4>
-                        <p class="widget-desc">輸入今日課堂講授的幾個關鍵詞，AI 將為您即時生成大綱與心智圖草案。</p>
-                        
-                        <div class="form-group">
-                            <textarea id="copilot-input" placeholder="例如：AI 代理人 (Agent)、Model Context Protocol (MCP)、環境變數配置..."></textarea>
-                        </div>
-                        
-                        <button class="btn btn-primary btn-block" id="generate-outline-btn">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i> 開始生成大綱
-                        </button>
-
-                        <div class="copilot-output-area hidden" id="copilot-output-container">
-                            <h5><i class="fa-solid fa-file-lines"></i> 生成的簡報大綱草稿：</h5>
-                            <div class="copilot-output-content" id="copilot-output"></div>
-                            <button class="btn btn-secondary btn-small" id="export-md-btn">
-                                <i class="fa-solid fa-download"></i> 匯出為 Markdown (.md)
-                            </button>
-                        </div>
-                    </div>
-                </section>
-
-            </div>
-        </main>
+    <div class="browser-alert" id="browserAlert">
+        ⚠️ 您正在使用 LINE 內建瀏覽器，語音發音功能受限！請複製網址後用 Chrome/Safari 開啟。
+        <div>
+            <button class="copy-btn" onclick="copyUrl()">📋 複製網址</button>
+            <span id="copySuccess" style="color: #2ecc71; display: none; margin-left: 10px;">已複製！</span>
+        </div>
     </div>
-    
-    <!-- Audio Element for Picker/Timer alerts -->
-    <audio id="alert-sound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-84.wav" preload="auto"></audio>
+    <div class="header">
+        <h1>好讚教學工具箱</h1>
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTool('card')">💼 名片</button>
+            <button class="nav-tab" onclick="showTool('timer')">⏱️ 計時器</button>
+            <button class="nav-tab" onclick="showTool('score')">🏆 計分板</button>
+            <button class="nav-tab" onclick="showTool('lottery')">🎰 抽籤</button>
+            <button class="nav-tab" onclick="showTool('whiteboard')">🖊️ 白板</button>
+            <button class="nav-tab" onclick="showTool('flashcard')">📚 閃卡</button>
+        </div>
+    </div>
 
-    <script src="app.js"></script>
+    <div class="content">
+        <!-- 01_Card -->
+        <div class="tool-section active" id="card">
+            <h2 class="tool-title">💼 數位名片</h2>
+            <div class="card-container">
+                <div class="digital-card">
+                    <img src="01_Card/avatar.png" alt="頭像" style="width: 120px; height: 120px; border-radius: 50%; border: 5px solid white; margin-bottom: 20px; object-fit: cover;">
+                    <h2>巫立</h2>
+                    <p>網路行銷</p>
+                    <div class="contact-info">
+                        <p>📧 <a href="mailto:uliuli1109@gmail.com" target="_blank" style="color: white; text-decoration: underline;">uliuli1109@gmail.com</a></p>
+                        <p>🌐 <a href="https://malantour.com" target="_blank" style="color: white; text-decoration: underline;">malantour.com</a></p>
+                        <p>🏢 瑪嵐旅遊</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 02_Timer -->
+        <div class="tool-section" id="timer">
+            <h2 class="tool-title">⏱️ 課堂倒數計時器</h2>
+            <div class="timer-container">
+                <div class="timer-display" id="timerDisplay">05:00</div>
+                <div class="timer-buttons">
+                    <button class="timer-btn start-btn" onclick="startTimer()">開始</button>
+                    <button class="timer-btn pause-btn" onclick="pauseTimer()">暫停</button>
+                    <button class="timer-btn reset-btn" onclick="resetTimer()">重置</button>
+                </div>
+                <div class="quick-times">
+                    <button class="quick-time-btn" onclick="setQuickTime(3)">3 分鐘</button>
+                    <button class="quick-time-btn" onclick="setQuickTime(5)">5 分鐘</button>
+                    <button class="quick-time-btn" onclick="setQuickTime(10)">10 分鐘</button>
+                    <button class="quick-time-btn" onclick="setQuickTime(15)">15 分鐘</button>
+                    <button class="quick-time-btn" onclick="addTime(1)">+1 分鐘</button>
+                    <button class="quick-time-btn" onclick="setQuickTime(0.083)">5 秒測試</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 03_Score -->
+        <div class="tool-section" id="score">
+            <h2 class="tool-title">🏆 小組計分板</h2>
+            <div class="global-buttons">
+                <button class="global-btn global-reset" onclick="resetAllScores()">重置全部分數</button>
+                <button class="global-btn global-reward" onclick="rewardAll()">全班獎勵 +1</button>
+            </div>
+            <div class="score-grid">
+                <div class="group-card">
+                    <div class="group-name">第一組</div>
+                    <div class="group-score" id="score1">0</div>
+                    <div class="score-buttons">
+                        <button class="score-btn score-add" onclick="updateScore(1, 1)">+1</button>
+                        <button class="score-btn score-sub" onclick="updateScore(1, -1)">-1</button>
+                    </div>
+                </div>
+                <div class="group-card">
+                    <div class="group-name">第二組</div>
+                    <div class="group-score" id="score2">0</div>
+                    <div class="score-buttons">
+                        <button class="score-btn score-add" onclick="updateScore(2, 1)">+1</button>
+                        <button class="score-btn score-sub" onclick="updateScore(2, -1)">-1</button>
+                    </div>
+                </div>
+                <div class="group-card">
+                    <div class="group-name">第三組</div>
+                    <div class="group-score" id="score3">0</div>
+                    <div class="score-buttons">
+                        <button class="score-btn score-add" onclick="updateScore(3, 1)">+1</button>
+                        <button class="score-btn score-sub" onclick="updateScore(3, -1)">-1</button>
+                    </div>
+                </div>
+                <div class="group-card">
+                    <div class="group-name">第四組</div>
+                    <div class="group-score" id="score4">0</div>
+                    <div class="score-buttons">
+                        <button class="score-btn score-add" onclick="updateScore(4, 1)">+1</button>
+                        <button class="score-btn score-sub" onclick="updateScore(4, -1)">-1</button>
+                    </div>
+                </div>
+                <div class="group-card">
+                    <div class="group-name">第五組</div>
+                    <div class="group-score" id="score5">0</div>
+                    <div class="score-buttons">
+                        <button class="score-btn score-add" onclick="updateScore(5, 1)">+1</button>
+                        <button class="score-btn score-sub" onclick="updateScore(5, -1)">-1</button>
+                    </div>
+                </div>
+                <div class="group-card">
+                    <div class="group-name">第六組</div>
+                    <div class="group-score" id="score6">0</div>
+                    <div class="score-buttons">
+                        <button class="score-btn score-add" onclick="updateScore(6, 1)">+1</button>
+                        <button class="score-btn score-sub" onclick="updateScore(6, -1)">-1</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 04_Lottery -->
+        <div class="tool-section" id="lottery">
+            <h2 class="tool-title">🎰 隨機點名抽籤</h2>
+            <div class="lottery-container">
+                <div class="lottery-options">
+                    <span class="remaining-badge">剩餘 <span id="lotteryCount">6</span> 人</span>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="noRepeat"> 不重複抽籤
+                    </label>
+                </div>
+                <button class="lottery-btn" onclick="drawLottery()">抽出幸運兒</button>
+                <div class="lottery-result">
+                    <div class="lottery-name" id="lotteryName"></div>
+                </div>
+                <div class="name-input-area">
+                    <textarea id="lotteryInput">張小明, 林大華, 陳美麗, 王好強, 李茱莉, 黃宇宙</textarea>
+                    <button class="timer-btn start-btn" style="margin-top: 10px; font-size: 14px; padding: 10px 20px;" onclick="updateLotteryNames()">更新名單</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 05_Whiteboard -->
+        <div class="tool-section" id="whiteboard">
+            <h2 class="tool-title">🖊️ 隨堂電子白板</h2>
+            <div class="whiteboard-toolbar">
+                <button class="wb-color-btn wb-black active" id="wbBlackBtn" onclick="setWbColor('black')"></button>
+                <button class="wb-color-btn wb-red" id="wbRedBtn" onclick="setWbColor('red')"></button>
+                <button class="wb-color-btn wb-blue" id="wbBlueBtn" onclick="setWbColor('blue')"></button>
+                <button class="wb-action-btn wb-eraser" id="wbEraserBtn" onclick="toggleWbEraser()">橡皮擦</button>
+                <button class="wb-action-btn wb-clear" onclick="clearWhiteboard()">全部清除</button>
+                <button class="wb-action-btn wb-save" onclick="saveWhiteboard()">保存版書</button>
+                <input type="range" id="wbPenSize" min="1" max="20" value="5" style="width: 100px;" onchange="setWbPenSize(this.value)">
+            </div>
+            <canvas class="whiteboard-canvas" id="whiteboardCanvas"></canvas>
+        </div>
+
+        <!-- 06_Flashcard -->
+        <div class="tool-section" id="flashcard">
+            <h2 class="tool-title">📚 知識閃卡</h2>
+            <div class="flashcard-container">
+                <div class="fc-card-container">
+                    <div class="fc-card" id="fcCard" onclick="flipFcCard()">
+                        <div class="fc-card-face fc-front">
+                            <div class="fc-label">英文</div>
+                            <div class="fc-content" id="fcFrontContent">abandon</div>
+                            <button class="fc-speak-btn" onclick="event.stopPropagation(); speakFcEnglish()">🔊 聽發音</button>
+                        </div>
+                        <div class="fc-card-face fc-back">
+                            <div class="fc-label">中文</div>
+                            <div class="fc-content" id="fcBackContent">放棄</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="fc-nav-buttons">
+                    <button class="fc-nav-btn fc-prev" onclick="fcPrev()">上一題</button>
+                    <button class="fc-nav-btn fc-next" onclick="fcNext()">下一題</button>
+                </div>
+                <div class="fc-progress">
+                    <span id="fcProgressText">1 / 100</span>
+                    <div class="fc-progress-bar">
+                        <div class="fc-progress-fill" id="fcProgressFill"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== Tab Navigation =====
+        function showTool(tool) {
+            document.querySelectorAll('.tool-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(tool).classList.add('active');
+            event.target.classList.add('active');
+            
+            if (tool === 'whiteboard') {
+                setTimeout(initWhiteboard, 100);
+            }
+        }
+
+        // ===== 02_Timer =====
+        let timerSeconds = 300;
+        let timerInterval = null;
+        let timerRunning = false;
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(timerSeconds / 60);
+            const secs = timerSeconds % 60;
+            document.getElementById('timerDisplay').textContent = 
+                `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            
+            if (timerSeconds === 0) {
+                document.getElementById('timerDisplay').classList.add('warning');
+                playTimerAlarm();
+            }
+        }
+
+        function startTimer() {
+            if (timerRunning || timerSeconds === 0) return;
+            timerRunning = true;
+            timerInterval = setInterval(() => {
+                timerSeconds--;
+                updateTimerDisplay();
+                if (timerSeconds === 0) {
+                    clearInterval(timerInterval);
+                    timerRunning = false;
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            timerRunning = false;
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            timerSeconds = 300;
+            document.getElementById('timerDisplay').classList.remove('warning');
+            updateTimerDisplay();
+        }
+
+        function setQuickTime(minutes) {
+            pauseTimer();
+            timerSeconds = Math.round(minutes * 60);
+            document.getElementById('timerDisplay').classList.remove('warning');
+            updateTimerDisplay();
+        }
+
+        function addTime(minutes) {
+            timerSeconds += minutes * 60;
+            updateTimerDisplay();
+        }
+
+        function playTimerAlarm() {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.frequency.value = 800;
+                    osc.type = 'sine';
+                    gain.gain.setValueAtTime(0.5, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.3);
+                }, i * 400);
+            }
+        }
+
+        // ===== 03_Score =====
+        let scores = [0, 0, 0, 0, 0, 0];
+
+        function updateScore(group, change) {
+            scores[group - 1] = Math.max(0, scores[group - 1] + change);
+            document.getElementById(`score${group}`).textContent = scores[group - 1];
+            updateHighestScore();
+        }
+
+        function updateHighestScore() {
+            const max = Math.max(...scores);
+            for (let i = 1; i <= 6; i++) {
+                const el = document.getElementById(`score${i}`);
+                scores[i - 1] === max && max > 0 ? el.classList.add('highest') : el.classList.remove('highest');
+            }
+        }
+
+        function resetAllScores() {
+            if (confirm('確定要重置所有分數嗎？')) {
+                scores = [0, 0, 0, 0, 0, 0];
+                for (let i = 1; i <= 6; i++) {
+                    document.getElementById(`score${i}`).textContent = '0';
+                    document.getElementById(`score${i}`).classList.remove('highest');
+                }
+            }
+        }
+
+        function rewardAll() {
+            scores = scores.map(s => s + 1);
+            for (let i = 1; i <= 6; i++) {
+                document.getElementById(`score${i}`).textContent = scores[i - 1];
+            }
+            updateHighestScore();
+        }
+
+        // ===== 04_Lottery =====
+        let lotteryNames = ['張小明', '林大華', '陳美麗', '王好強', '李茱莉', '黃宇宙'];
+        let lotteryDrawing = false;
+
+        function updateLotteryNames() {
+            const input = document.getElementById('lotteryInput').value;
+            const parsed = input.split(/[,，\n]+/).map(n => n.trim()).filter(n => n.length > 0);
+            if (parsed.length > 0) {
+                lotteryNames = parsed;
+                document.getElementById('lotteryCount').textContent = lotteryNames.length;
+                alert('名單已更新！共 ' + lotteryNames.length + ' 人');
+            }
+        }
+
+        function drawLottery() {
+            if (lotteryDrawing || lotteryNames.length === 0) return;
+            lotteryDrawing = true;
+            
+            const nameEl = document.getElementById('lotteryName');
+            const noRepeat = document.getElementById('noRepeat').checked;
+            let count = 0;
+            
+            const interval = setInterval(() => {
+                nameEl.textContent = lotteryNames[Math.floor(Math.random() * lotteryNames.length)];
+                nameEl.style.opacity = '1';
+                nameEl.style.transform = 'scale(1)';
+                count++;
+                
+                if (count >= 20) {
+                    clearInterval(interval);
+                    const finalIndex = Math.floor(Math.random() * lotteryNames.length);
+                    nameEl.textContent = lotteryNames[finalIndex];
+                    nameEl.classList.add('show');
+                    playLotteryCelebration();
+                    
+                    if (noRepeat) {
+                        lotteryNames.splice(finalIndex, 1);
+                        document.getElementById('lotteryCount').textContent = lotteryNames.length;
+                        document.getElementById('lotteryInput').value = lotteryNames.join(', ');
+                    }
+                    
+                    lotteryDrawing = false;
+                }
+            }, 100);
+        }
+
+        function playLotteryCelebration() {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const notes = [523.25, 659.25, 783.99, 1046.50];
+            let t = ctx.currentTime;
+            notes.forEach(freq => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.frequency.value = freq;
+                osc.type = 'sine';
+                gain.gain.setValueAtTime(0.3, t);
+                gain.gain.exponentialRampToValueAtTime(0.01, t + 0.15);
+                osc.start(t);
+                osc.stop(t + 0.15);
+                t += 0.15;
+            });
+        }
+
+        // ===== 05_Whiteboard =====
+        let wbCanvas, wbCtx;
+        let wbDrawing = false;
+        let wbColor = 'black';
+        let wbEraser = false;
+        let wbPenSize = 5;
+        let wbLastX, wbLastY;
+
+        function initWhiteboard() {
+            wbCanvas = document.getElementById('whiteboardCanvas');
+            wbCtx = wbCanvas.getContext('2d');
+            const wrapper = wbCanvas.parentElement;
+            wbCanvas.width = wrapper.clientWidth;
+            wbCanvas.height = 400;
+            
+            wbCanvas.onmousedown = wbStart;
+            wbCanvas.onmousemove = wbDraw;
+            wbCanvas.onmouseup = wbStop;
+            wbCanvas.onmouseout = wbStop;
+            wbCanvas.ontouchstart = wbStart;
+            wbCanvas.ontouchmove = wbDraw;
+            wbCanvas.ontouchend = wbStop;
+        }
+
+        function wbStart(e) {
+            e.preventDefault();
+            wbDrawing = true;
+            const rect = wbCanvas.getBoundingClientRect();
+            const touch = e.touches ? e.touches[0] : e;
+            wbLastX = (touch.clientX - rect.left) * (wbCanvas.width / rect.width);
+            wbLastY = (touch.clientY - rect.top) * (wbCanvas.height / rect.height);
+        }
+
+        function wbDraw(e) {
+            e.preventDefault();
+            if (!wbDrawing) return;
+            const rect = wbCanvas.getBoundingClientRect();
+            const touch = e.touches ? e.touches[0] : e;
+            const x = (touch.clientX - rect.left) * (wbCanvas.width / rect.width);
+            const y = (touch.clientY - rect.top) * (wbCanvas.height / rect.height);
+            
+            wbCtx.beginPath();
+            wbCtx.moveTo(wbLastX, wbLastY);
+            wbCtx.lineTo(x, y);
+            wbCtx.strokeStyle = wbEraser ? 'white' : wbColor;
+            wbCtx.lineWidth = wbEraser ? wbPenSize * 3 : wbPenSize;
+            wbCtx.lineCap = 'round';
+            wbCtx.lineJoin = 'round';
+            wbCtx.stroke();
+            
+            wbLastX = x;
+            wbLastY = y;
+        }
+
+        function wbStop() { wbDrawing = false; }
+
+        function setWbColor(color) {
+            wbColor = color;
+            wbEraser = false;
+            document.querySelectorAll('.wb-color-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('wbEraserBtn').classList.remove('active');
+            document.getElementById('wb' + color.charAt(0).toUpperCase() + color.slice(1) + 'Btn').classList.add('active');
+        }
+
+        function toggleWbEraser() {
+            wbEraser = !wbEraser;
+            document.querySelectorAll('.wb-color-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('wbEraserBtn').classList.toggle('active', wbEraser);
+        }
+
+        function clearWhiteboard() {
+            if (confirm('確定要清除整個白板嗎？')) {
+                wbCtx.clearRect(0, 0, wbCanvas.width, wbCanvas.height);
+            }
+        }
+
+        function saveWhiteboard() {
+            const link = document.createElement('a');
+            link.download = '白板_' + new Date().toISOString().slice(0, 10) + '.png';
+            link.href = wbCanvas.toDataURL('image/png');
+            link.click();
+        }
+
+        function setWbPenSize(size) { wbPenSize = parseInt(size); }
+
+        // ===== 06_Flashcard =====
+        const fcWords = [
+            { front: 'abandon', back: '放棄' }, { front: 'ability', back: '能力' },
+            { front: 'absent', back: '缺席的' }, { front: 'absorb', back: '吸收' },
+            { front: 'abstract', back: '抽象的' }, { front: 'academic', back: '學術的' },
+            { front: 'accept', back: '接受' }, { front: 'access', back: '通道；進入' },
+            { front: 'accomplish', back: '完成；實現' }, { front: 'account', back: '帳戶；描述' },
+            { front: 'accurate', back: '準確的' }, { front: 'achieve', back: '達成；實現' },
+            { front: 'adapt', back: '適應；改編' }, { front: 'adequate', back: '足夠的' },
+            { front: 'adjust', back: '調整；適應' }, { front: 'admire', back: '欣賞；欽佩' },
+            { front: 'admit', back: '承認；准許進入' }, { front: 'adolescent', back: '青少年' },
+            { front: 'adopt', back: '採用；收養' }, { front: 'adult', back: '成人' },
+            { front: 'advance', back: '前進；進步' }, { front: 'advantage', back: '優勢' },
+            { front: 'adventure', back: '冒險' }, { front: 'advertise', back: '登廣告' },
+            { front: 'affect', back: '影響' }, { front: 'afford', back: '負擔得起' },
+            { front: 'agenda', back: '議程' }, { front: 'aggressive', back: '有進取心的' },
+            { front: 'agree', back: '同意' }, { front: 'agriculture', back: '農業' },
+            { front: 'aim', back: '目標；瞄準' }, { front: 'alarm', back: '警報' },
+            { front: 'album', back: '相簿；專輯' }, { front: 'alcohol', back: '酒精' },
+            { front: 'alert', back: '警覺的' }, { front: 'alien', back: '外星人' },
+            { front: 'allow', back: '允許' }, { front: 'alter', back: '改變' },
+            { front: 'alternative', back: '替代的' }, { front: 'amaze', back: '使驚奇' },
+            { front: 'ambition', back: '雄心' }, { front: 'ambulance', back: '救護車' },
+            { front: 'among', back: '在...之中' }, { front: 'amount', back: '總量' },
+            { front: 'analyze', back: '分析' }, { front: 'ancestor', back: '祖先' },
+            { front: 'ancient', back: '古老的' }, { front: 'anger', back: '憤怒' },
+            { front: 'announce', back: '宣布' }, { front: 'annual', back: '每年的' },
+            { front: 'anxiety', back: '焦慮' }, { front: 'apart', back: '分開地' },
+            { front: 'apartment', back: '公寓' }, { front: 'apologize', back: '道歉' },
+            { front: 'apparent', back: '顯然的' }, { front: 'appeal', back: '呼吁' },
+            { front: 'appear', back: '出現' }, { front: 'appetite', back: '食慾' },
+            { front: 'applause', back: '掌聲' }, { front: 'apply', back: '申請' },
+            { front: 'appreciate', back: '感激' }, { front: 'approach', back: '接近' },
+            { front: 'appropriate', back: '適當的' }, { front: 'approve', back: '批准' },
+            { front: 'architect', back: '建築師' }, { front: 'area', back: '地區' },
+            { front: 'argue', back: '爭論' }, { front: 'arise', back: '出現' },
+            { front: 'army', back: '軍隊' }, { front: 'arrange', back: '安排' },
+            { front: 'arrest', back: '逮捕' }, { front: 'article', back: '文章' },
+            { front: 'artificial', back: '人造的' }, { front: 'artist', back: '藝術家' },
+            { front: 'ashamed', back: '羞愧的' }, { front: 'aspect', back: '方面' },
+            { front: 'assemble', back: '組裝' }, { front: 'assess', back: '評估' },
+            { front: 'assign', back: '分配' }, { front: 'assist', back: '協助' },
+            { front: 'assume', back: '假設' }, { front: 'assure', back: '保證' },
+            { front: 'atmosphere', back: '大氣層' }, { front: 'attach', back: '附上' },
+            { front: 'attack', back: '攻擊' }, { front: 'attain', back: '達到' },
+            { front: 'attempt', back: '嘗試' }, { front: 'attend', back: '參加' },
+            { front: 'attitude', back: '態度' }, { front: 'attract', back: '吸引' },
+            { front: 'audience', back: '觀眾' }, { front: 'authority', back: '權威' },
+            { front: 'automatic', back: '自動的' }, { front: 'available', back: '可用的' },
+            { front: 'average', back: '平均' }, { front: 'avoid', back: '避免' },
+            { front: 'award', back: '獎項' }, { front: 'aware', back: '意識到' },
+            { front: 'awful', back: '糟糕的' }, { front: 'background', back: '背景' },
+            { front: 'bargain', back: '便宜貨' }, { front: 'basic', back: '基本的' },
+            { front: 'beauty', back: '美麗' }, { front: 'behalf', back: '代表' },
+            { front: 'behave', back: '行為' }, { front: 'belief', back: '信念' },
+            { front: 'belong', back: '屬於' }, { front: 'benefit', back: '好處' },
+            { front: 'beside', back: '在...旁邊' }, { front: 'beyond', back: '超越' },
+            { front: 'blank', back: '空白的' }, { front: 'blast', back: '爆炸' },
+            { front: 'blend', back: '混合' }, { front: 'bless', back: '祝福' },
+            { front: 'bold', back: '大膽的' }, { front: 'bonus', back: '獎金' }
+        ];
+
+        let fcIndex = 0;
+        let fcFlipped = false;
+
+        function updateFcCard() {
+            document.getElementById('fcFrontContent').textContent = fcWords[fcIndex].front;
+            document.getElementById('fcBackContent').textContent = fcWords[fcIndex].back;
+            document.getElementById('fcProgressText').textContent = `${fcIndex + 1} / ${fcWords.length}`;
+            document.getElementById('fcProgressFill').style.width = `${((fcIndex + 1) / fcWords.length) * 100}%`;
+            document.getElementById('fcCard').classList.remove('flipped');
+            fcFlipped = false;
+        }
+
+        function flipFcCard() {
+            fcFlipped = !fcFlipped;
+            document.getElementById('fcCard').classList.toggle('flipped', fcFlipped);
+        }
+
+        function fcPrev() { if (fcIndex > 0) { fcIndex--; updateFcCard(); } }
+        function fcNext() { if (fcIndex < fcWords.length - 1) { fcIndex++; updateFcCard(); } }
+
+        function speakFcEnglish() {
+            const utterance = new SpeechSynthesisUtterance(fcWords[fcIndex].front);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.8;
+            speechSynthesis.speak(utterance);
+        }
+
+        updateTimerDisplay();
+        updateFcCard();
+
+        // 檢測 LINE 內建瀏覽器
+        function detectLINE() {
+            const ua = navigator.userAgent.toLowerCase();
+            return ua.includes('line');
+        }
+
+        function copyUrl() {
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                document.getElementById('copySuccess').style.display = 'inline';
+                setTimeout(() => {
+                    document.getElementById('copySuccess').style.display = 'none';
+                }, 2000);
+            }).catch(() => {
+                // 備用方案
+                const textArea = document.createElement('textarea');
+                textArea.value = url;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                document.getElementById('copySuccess').style.display = 'inline';
+                setTimeout(() => {
+                    document.getElementById('copySuccess').style.display = 'none';
+                }, 2000);
+            });
+        }
+
+        if (detectLINE()) {
+            document.getElementById('browserAlert').classList.add('show');
+        }
+    </script>
 </body>
 </html>

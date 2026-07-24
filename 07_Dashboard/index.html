@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>好讚功能卡牌傳送門</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            color: white;
+            margin-bottom: 15px;
+            text-shadow: 0 0 30px rgba(138, 43, 226, 0.5);
+        }
+
+        .header p {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px 30px;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.1) 0%, rgba(75, 0, 130, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: rgba(138, 43, 226, 0.5);
+            box-shadow: 0 20px 60px rgba(138, 43, 226, 0.3),
+                        0 0 40px rgba(138, 43, 226, 0.2);
+        }
+
+        .card-icon {
+            font-size: 64px;
+            margin-bottom: 25px;
+            display: block;
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+        }
+
+        .card-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-desc {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-number {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 32px;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .card {
+                padding: 30px 20px;
+            }
+            
+            .card-icon {
+                font-size: 50px;
+            }
+            
+            .card-title {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>好讚功能卡牌傳送門</h1>
+            <p>點擊卡牌即可快速前往各項實用工具</p>
+        </div>
+
+        <div class="cards-grid">
+            <a href="../01_Card/index.html" target="_blank" class="card">
+                <span class="card-number">01</span>
+                <span class="card-icon">💼</span>
+                <h2 class="card-title">數位名片</h2>
+                <p class="card-desc">建立專業的個人數位名片，輕鬆分享聯絡資訊</p>
+            </a>
+
+            <a href="../02_Timer/index.html" target="_blank" class="card">
+                <span class="card-number">02</span>
+                <span class="card-icon">⏱️</span>
+                <h2 class="card-title">課堂倒數計時器</h2>
+                <p class="card-desc">精準掌握課堂時間，提升教學效率</p>
+            </a>
+
+            <a href="../03_Score/index.html" target="_blank" class="card">
+                <span class="card-number">03</span>
+                <span class="card-icon">🏆</span>
+                <h2 class="card-title">小組計分板</h2>
+                <p class="card-desc">即時記錄小組表現，激發學習動機</p>
+            </a>
+
+            <a href="../04_Lottery/index.html" target="_blank" class="card">
+                <span class="card-number">04</span>
+                <span class="card-icon">🎰</span>
+                <h2 class="card-title">隨機點名抽籤</h2>
+                <p class="card-desc">公平隨機抽選，讓每位學生都有機會</p>
+            </a>
+
+            <a href="../05_Whiteboard/index.html" target="_blank" class="card">
+                <span class="card-number">05</span>
+                <span class="card-icon">🖊️</span>
+                <h2 class="card-title">隨堂電子白板</h2>
+                <p class="card-desc">自由繪製板書，生動呈現教學內容</p>
+            </a>
+
+            <a href="../06_Flashcard/index.html" target="_blank" class="card">
+                <span class="card-number">06</span>
+                <span class="card-icon">📚</span>
+                <h2 class="card-title">知識閃卡工具</h2>
+                <p class="card-desc">高效記憶單字，提升英文學習成效</p>
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>好讚教學工具箱 - 讓每一堂課都精彩</p>
+        </div>
+    </div>
+</body>
+</html>

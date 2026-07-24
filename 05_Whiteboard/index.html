@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>簡易隨堂電子白板</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background: #f0f0f0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .whiteboard-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .toolbar {
+            background: linear-gradient(135deg, #4a5568, #2d3748);
+            padding: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-title {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            margin-right: 20px;
+        }
+
+        .color-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 4px solid white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .color-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .color-btn.active {
+            transform: scale(1.15);
+            box-shadow: 0 0 0 3px #ffd700, 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .color-black {
+            background: #000000;
+        }
+
+        .color-red {
+            background: #e74c3c;
+        }
+
+        .color-blue {
+            background: #3498db;
+        }
+
+        .action-btn {
+            font-size: 16px;
+            font-weight: bold;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .eraser-btn {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            color: white;
+        }
+
+        .eraser-btn:hover {
+            background: linear-gradient(135deg, #85a5a6, #6f7c7d);
+        }
+
+        .eraser-btn.active {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            box-shadow: 0 0 0 3px #ffd700;
+        }
+
+        .clear-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .clear-btn:hover {
+            background: linear-gradient(135deg, #d73c2c, #b0291b);
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+        }
+
+        .save-btn:hover {
+            background: linear-gradient(135deg, #2ebc61, #279e50);
+        }
+
+        .canvas-wrapper {
+            padding: 20px;
+            background: #e8e8e8;
+        }
+
+        .canvas-frame {
+            background: #d0d0d0;
+            border: 15px solid #b0b0b0;
+            border-radius: 10px;
+            box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            background: white;
+            cursor: crosshair;
+            touch-action: none;
+        }
+
+        .pen-size {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: auto;
+        }
+
+        .pen-size label {
+            color: white;
+            font-size: 14px;
+        }
+
+        .pen-size input {
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="whiteboard-container">
+        <div class="toolbar">
+            <span class="toolbar-title">電子白板</span>
+            
+            <button class="color-btn color-black active" id="blackBtn" onclick="setColor('black')"></button>
+            <button class="color-btn color-red" id="redBtn" onclick="setColor('red')"></button>
+            <button class="color-btn color-blue" id="blueBtn" onclick="setColor('blue')"></button>
+            
+            <button class="action-btn eraser-btn" id="eraserBtn" onclick="toggleEraser()">橡皮擦</button>
+            <button class="action-btn clear-btn" onclick="clearCanvas()">全部清除</button>
+            <button class="action-btn save-btn" onclick="saveWhiteboard()">保存版書</button>
+            
+            <div class="pen-size">
+                <label>筆刷大小：</label>
+                <input type="range" id="penSize" min="1" max="20" value="5" onchange="setPenSize(this.value)">
+            </div>
+        </div>
+        
+        <div class="canvas-wrapper">
+            <div class="canvas-frame">
+                <canvas id="whiteboard"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('whiteboard');
+        const ctx = canvas.getContext('2d');
+        
+        let isDrawing = false;
+        let currentColor = 'black';
+        let isEraser = false;
+        let penSize = 5;
+        let lastX = 0;
+        let lastY = 0;
+
+        function resizeCanvas() {
+            const wrapper = canvas.parentElement;
+            canvas.width = wrapper.clientWidth;
+            canvas.height = Math.max(500, window.innerHeight - 250);
+        }
+
+        function setColor(color) {
+            currentColor = color;
+            isEraser = false;
+            
+            document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('eraserBtn').classList.remove('active');
+            
+            document.getElementById(color + 'Btn').classList.add('active');
+            canvas.style.cursor = 'crosshair';
+        }
+
+        function toggleEraser() {
+            isEraser = !isEraser;
+            const eraserBtn = document.getElementById('eraserBtn');
+            
+            if (isEraser) {
+                document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
+                eraserBtn.classList.add('active');
+                canvas.style.cursor = 'cell';
+            } else {
+                eraserBtn.classList.remove('active');
+                document.getElementById(currentColor + 'Btn').classList.add('active');
+                canvas.style.cursor = 'crosshair';
+            }
+        }
+
+        function clearCanvas() {
+            if (confirm('確定要清除整個白板嗎？')) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+
+        function saveWhiteboard() {
+            const link = document.createElement('a');
+            link.download = '白板_' + new Date().toISOString().slice(0, 10) + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        function setPenSize(size) {
+            penSize = parseInt(size);
+        }
+
+        function getCoordinates(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            
+            if (e.touches) {
+                return {
+                    x: (e.touches[0].clientX - rect.left) * scaleX,
+                    y: (e.touches[0].clientY - rect.top) * scaleY
+                };
+            }
+            return {
+                x: (e.clientX - rect.left) * scaleX,
+                y: (e.clientY - rect.top) * scaleY
+            };
+        }
+
+        function startDrawing(e) {
+            e.preventDefault();
+            isDrawing = true;
+            const coords = getCoordinates(e);
+            lastX = coords.x;
+            lastY = coords.y;
+        }
+
+        function draw(e) {
+            e.preventDefault();
+            if (!isDrawing) return;
+            
+            const coords = getCoordinates(e);
+            
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(coords.x, coords.y);
+            ctx.strokeStyle = isEraser ? 'white' : currentColor;
+            ctx.lineWidth = isEraser ? penSize * 3 : penSize;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.stroke();
+            
+            lastX = coords.x;
+            lastY = coords.y;
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        canvas.addEventListener('touchstart', startDrawing, { passive: false });
+        canvas.addEventListener('touchmove', draw, { passive: false });
+        canvas.addEventListener('touchend', stopDrawing);
+
+        window.addEventListener('resize', resizeCanvas);
+        
+        resizeCanvas();
+    </script>
+</body>
+</html>
